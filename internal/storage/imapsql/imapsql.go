@@ -64,6 +64,8 @@ type Storage struct {
 	driver string
 	dsn    []string
 
+	useEncryption bool
+
 	resolver dns.Resolver
 
 	updPipe      updatepipe.P
@@ -113,9 +115,12 @@ func (store *Storage) Init(cfg *config.Map) error {
 		deliveryNormalize string
 
 		blobStore module.BlobStore
+
+		useEncryption bool
 	)
 
 	opts := imapsql.Opts{}
+	cfg.Bool("use_encryption", false, false, &useEncryption)
 	cfg.String("driver", false, false, store.driver, &driver)
 	cfg.StringList("dsn", false, false, store.dsn, &dsn)
 	cfg.Callback("fsstore", func(m *config.Map, node config.Node) error {
@@ -273,7 +278,7 @@ func (store *Storage) Init(cfg *config.Map) error {
 
 	store.driver = driver
 	store.dsn = dsn
-
+	store.useEncryption = useEncryption
 	return nil
 }
 
